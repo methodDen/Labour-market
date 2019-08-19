@@ -1,99 +1,53 @@
 package Dao;
 
-import POJO.Employee;
-import Utils.Settings;
-import org.hibernate.HibernateException;
+import POJO.*;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.service.ServiceRegistry;
 
-import javax.persistence.Id;
-import java.io.Serializable;
 import java.util.List;
-import java.util.Properties;
-// check again (unchecked)
 public class EmployeeDAO implements DaoInterface<Employee, Integer> {
     private Session session;
     private Transaction transaction;
-    private static SessionFactory sessionFactory;
-
-    private static SessionFactory getSessionFactory() {
-        if (sessionFactory == null) {
-            try {
-                Configuration configuration = new Configuration();
-                Properties settings = new Properties();
-                settings = Settings.getSettings();
-                configuration.addAnnotatedClass(Employee.class);
-                configuration.setProperties(settings);
-                ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
-                        .applySettings(configuration.getProperties()).build();
-                sessionFactory = configuration.buildSessionFactory(serviceRegistry);
-
-            } catch (HibernateException e) {
-                e.printStackTrace();
-            }
-        }
-        return sessionFactory;
-    }
 
     public EmployeeDAO() {
     }
 
-    private Session openSessionEmployee() { // noodles
+    public Session openCurrentSession() {
         session = getSessionFactory().openSession();
         return session;
     }
-    private Session openSessionWithTransactionEmployee() { // noodles
+
+    public Session openCurrentSessionwithTransaction() {
         session = getSessionFactory().openSession();
         transaction = session.beginTransaction();
         return session;
     }
 
-    public void closeSession() {
+    public void closeCurrentSession() {
         session.close();
     }
-    public void closeSessionWithTransaction() {
+
+    public void closeCurrentSessionwithTransaction() {
         transaction.commit();
         session.close();
     }
 
-
-    @Override
-    public void persist(Employee entity) {
-        getSession().save(entity);
-    }
-
-    @Override
-    public void update(Employee entity) {
-        getSession().update(entity);
-    }
-
-    @Override
-    public Employee findById(Integer id) {
-        Employee employee = (Employee) getSession().get(Employee.class, id);
-        return  employee;
-    }
-
-    @Override
-    public void delete(Employee entity) {
-        getSession().delete(entity);
-    }
-
-    @Override
-    public List<Employee> findAll() {
-        List<Employee> employees = (List<Employee>) getSession().createQuery("from Employee").list();
-        return employees;
-    }
-
-    @Override
-    public void deleteAll() {
-        List<Employee> employees = findAll();
-        for (Employee e : employees) {
-            delete(e);
-        }
+    private static SessionFactory getSessionFactory() {
+        Configuration configuration = new Configuration();
+        configuration.addAnnotatedClass(Company.class);
+        configuration.addAnnotatedClass(Employee.class);
+        configuration.addAnnotatedClass(Employer.class);
+        configuration.addAnnotatedClass(Job.class);
+        configuration.addAnnotatedClass(Rating.class);
+        configuration.addAnnotatedClass(Tag.class);
+        configuration.configure();
+        StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder()
+                .applySettings(configuration.getProperties());
+        SessionFactory sessionFactory = configuration.buildSessionFactory(builder.build());
+        return sessionFactory;
     }
 
     public Session getSession() {
@@ -112,7 +66,43 @@ public class EmployeeDAO implements DaoInterface<Employee, Integer> {
         this.transaction = transaction;
     }
 
-    public static void setSessionFactory(SessionFactory sessionFactory) {
-        EmployeeDAO.sessionFactory = sessionFactory;
+
+    @Override
+    public void persist(Employee entity) {
+        getSession().save(entity);
+    }
+
+    @Override
+    public void update(Employee entity) {
+        getSession().update(entity);
+    }
+
+    @Override
+    public Employee findById(Integer id) {
+        Employee employee =(Employee) getSession().get(Employee.class, id);
+        return employee;
+
+    }
+
+    @Override
+    public void delete(Employee entity) {
+        getSession().delete(entity);
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<Employee> findAll() {
+        List<Employee> employees = (List<Employee>)getSession().createQuery("from Employee").list();
+        return employees;
+    }
+
+    @Override
+    public void deleteAll() {
+        List<Employee> employees = findAll();
+        for (Employee e : employees)
+        {
+            delete(e);
+        }
+
     }
 }

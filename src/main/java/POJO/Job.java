@@ -1,51 +1,68 @@
 package POJO;
 
-import POJO.Employer;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
 @Entity
-@Table(name = "POJO.Job")
+@Table(name = "Job")
 public class Job {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     @Column(name = "jobId")
     private int id;
 
-    @Override
-    public String toString() {
-        return "POJO.Job{" +
-                "id=" + id +
-                ", jobName='" + jobName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", paymentSum='" + paymentSum + '\'' +
-                ", timeDuration=" + timeDuration +
-                ", processInfo='" + processInfo + '\'' +
-                ", rating=" + rating +
-                ", tags=" + tags +
-                ", employers=" + employers +
-                '}';
+    public String getPlaceOfPerfomance() {
+        return placeOfPerfomance;
+    }
+
+    public void setPlaceOfPerfomance(String placeOfPerfomance) {
+        this.placeOfPerfomance = placeOfPerfomance;
+    }
+
+    public String getDateOfCompletion() {
+        return dateOfCompletion;
+    }
+
+    public void setDateOfCompletion(String dateOfCompletion) {
+        this.dateOfCompletion = dateOfCompletion;
+    }
+
+    public String getProcessStatus() {
+        return processStatus;
+    }
+
+    public void setProcessStatus(String processStatus) {
+        this.processStatus = processStatus;
+    }
+
+    public String getJobDescription() {
+        return jobDescription;
+    }
+
+    public void setJobDescription(String jobDescription) {
+        this.jobDescription = jobDescription;
     }
 
     @Column (name = "jobName")
     private String jobName;
 
+    @Column(name = "placeOfPerfomance")
+    private String placeOfPerfomance; // google maps???
+
     @Column(name = "dateOfCompletion")
-    private String lastName; // attribute type should be chosen correctly
+    private String dateOfCompletion; // attribute type should be chosen correctly
 
     @Column(name = "paymentSum")
     private String paymentSum; // attribute type should be chosen correctly
 
-    @Column(name = "timeDuration")
-    private int timeDuration;     // attribute type should be chosen correctly
+    @Column(name = "processStatus")
+    private String processStatus;
 
-    @Column(name = "processInfo")
-    private String processInfo;
 
-    @Column(name = "rating")
-    private int rating;
+    @Column(name = "jobDescription")
+    private String jobDescription;
 
     public int getId() {
         return id;
@@ -63,13 +80,7 @@ public class Job {
         this.jobName = jobName;
     }
 
-    public String getLastName() {
-        return lastName;
-    }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
 
     public String getPaymentSum() {
         return paymentSum;
@@ -77,30 +88,6 @@ public class Job {
 
     public void setPaymentSum(String paymentSum) {
         this.paymentSum = paymentSum;
-    }
-
-    public int getTimeDuration() {
-        return timeDuration;
-    }
-
-    public void setTimeDuration(int timeDuration) {
-        this.timeDuration = timeDuration;
-    }
-
-    public String getProcessInfo() {
-        return processInfo;
-    }
-
-    public void setProcessInfo(String processInfo) {
-        this.processInfo = processInfo;
-    }
-
-    public int getRating() {
-        return rating;
-    }
-
-    public void setRating(int rating) {
-        this.rating = rating;
     }
 
     public Collection<Tag> getTags() {
@@ -131,6 +118,34 @@ public class Job {
             joinColumns = @JoinColumn(name = "jobId"),
             inverseJoinColumns = @JoinColumn(name = "employerId"))
     private Collection<Employer> employers = new ArrayList<>();
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "ratingId")
+    private Rating rating;
+
+    @Override
+    public String toString() {
+        return "Job{" +
+                "id=" + id +
+                ", jobName='" + jobName + '\'' +
+                ", placeOfPerfomance='" + placeOfPerfomance + '\'' +
+                ", dateOfCompletion='" + dateOfCompletion + '\'' +
+                ", paymentSum='" + paymentSum + '\'' +
+                ", processStatus='" + processStatus + '\'' +
+                ", jobDescription='" + jobDescription + '\'' +
+                ", tags=" + tags +
+                ", employers=" + employers +
+                ", rating=" + rating +
+                '}';
+    }
+
+    public Rating getRating() {
+        return rating;
+    }
+
+    public void setRating(Rating rating) {
+        this.rating = rating;
+    }
 
     public Job() {
     }

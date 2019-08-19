@@ -3,7 +3,7 @@ package POJO;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "POJO.Company")
+@Table(name = "Company")
 public class Company {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
@@ -13,7 +13,7 @@ public class Company {
     @Column(name = "companyName")
     private String companyName;
 
-    public Company() {
+        public Company() {
     }
 
     public int getId() {

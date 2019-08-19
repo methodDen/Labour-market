@@ -5,7 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 @Entity
-@Table(name="POJO.Employee")
+@Table(name="Employee")
 public class Employee {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
@@ -27,8 +27,30 @@ public class Employee {
     @Column(name = "profileDescription")
     private String profileDescription;
 
+    @Column(name = "password")
+    private String password; // sensitive data, cypher
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     @Column(name = "email")
     private String email;
+
+    @Column(name = "extraEmail")
+    private String extraEmail;  // sensitive data
+
+    public String getExtraEmail() {
+        return extraEmail;
+    }
+
+    public void setExtraEmail(String extraEmail) {
+        this.extraEmail = extraEmail;
+    }
 
     @Column(name = "paypalPurse")
     private long creditCardId;
@@ -43,22 +65,6 @@ public class Employee {
     public Collection<Tag> getTags() {
 
         return tags;
-    }
-
-    @Override
-    public String toString() {
-        return "POJO.Employee{" +
-                "id=" + id +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", regionName='" + regionName + '\'' +
-                ", mobilePhone='" + mobilePhone + '\'' +
-                ", profileDescription='" + profileDescription + '\'' +
-                ", email='" + email + '\'' +
-                ", creditCardId=" + creditCardId +
-                ", jobs=" + jobs +
-                ", tags=" + tags +
-                '}';
     }
 
     public Employee() {
@@ -144,4 +150,36 @@ public class Employee {
             joinColumns = @JoinColumn(name = "employeeId"),
             inverseJoinColumns = @JoinColumn(name = "tagId"))
     private Collection<Tag> tags = new ArrayList<>();
+
+
+    @Override
+    public String toString() {
+        return "Employee{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", regionName='" + regionName + '\'' +
+                ", mobilePhone='" + mobilePhone + '\'' +
+                ", profileDescription='" + profileDescription + '\'' +
+                ", password='" + password + '\'' +
+                ", email='" + email + '\'' +
+                ", extraEmail='" + extraEmail + '\'' +
+                ", creditCardId=" + creditCardId +
+                ", jobs=" + jobs +
+                ", tags=" + tags +
+                ", rating=" + rating +
+                '}';
+    }
+
+    public Rating getRating() {
+        return rating;
+    }
+
+    public void setRating(Rating rating) {
+        this.rating = rating;
+    }
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "ratingId")
+    private Rating rating;
 }

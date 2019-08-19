@@ -1,42 +1,52 @@
 package Dao;
 
-import POJO.Company;
-import POJO.Job;
-import Utils.Settings;
-import org.hibernate.HibernateException;
+import POJO.*;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.service.ServiceRegistry;
 
 import java.util.List;
-import java.util.Properties;
-
 public class JobDAO implements DaoInterface<Job, Integer> {
     private Session session;
     private Transaction transaction;
-    private static SessionFactory sessionFactory;
 
     public JobDAO() {
     }
-    private static SessionFactory getSessionFactory() {
-        if (sessionFactory == null) {
-            try {
-                Configuration configuration = new Configuration();
-                Properties settings = new Properties();
-                settings = Settings.getSettings();
-                configuration.addAnnotatedClass(Job.class);
-                configuration.setProperties(settings);
-                ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
-                        .applySettings(configuration.getProperties()).build();
-                sessionFactory = configuration.buildSessionFactory(serviceRegistry);
 
-            } catch (HibernateException e) {
-                e.printStackTrace();
-            }
-        }
+    public Session openCurrentSession() {
+        session = getSessionFactory().openSession();
+        return session;
+    }
+
+    public Session openCurrentSessionwithTransaction() {
+        session = getSessionFactory().openSession();
+        transaction = session.beginTransaction();
+        return session;
+    }
+
+    public void closeCurrentSession() {
+        session.close();
+    }
+
+    public void closeCurrentSessionwithTransaction() {
+        transaction.commit();
+        session.close();
+    }
+
+    private static SessionFactory getSessionFactory() {
+        Configuration configuration = new Configuration();
+        configuration.addAnnotatedClass(Company.class);
+        configuration.addAnnotatedClass(Employee.class);
+        configuration.addAnnotatedClass(Employer.class);
+        configuration.addAnnotatedClass(Job.class);
+        configuration.addAnnotatedClass(Rating.class);
+        configuration.addAnnotatedClass(Tag.class);
+        configuration.configure();
+        StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder()
+                .applySettings(configuration.getProperties());
+        SessionFactory sessionFactory = configuration.buildSessionFactory(builder.build());
         return sessionFactory;
     }
 
@@ -56,9 +66,6 @@ public class JobDAO implements DaoInterface<Job, Integer> {
         this.transaction = transaction;
     }
 
-    public static void setSessionFactory(SessionFactory sessionFactory) {
-        JobDAO.sessionFactory = sessionFactory;
-    }
 
     @Override
     public void persist(Job entity) {
@@ -74,6 +81,7 @@ public class JobDAO implements DaoInterface<Job, Integer> {
     public Job findById(Integer id) {
         Job job = (Job) getSession().get(Job.class, id);
         return job;
+
     }
 
     @Override
@@ -81,9 +89,10 @@ public class JobDAO implements DaoInterface<Job, Integer> {
         getSession().delete(entity);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public List<Job> findAll() {
-        List<Job> jobs = (List<Job>) getSession().createQuery("from Job");
+        List<Job> jobs = (List<Job>)getSession().createQuery("from Job").list();
         return jobs;
     }
 
@@ -94,5 +103,6 @@ public class JobDAO implements DaoInterface<Job, Integer> {
         {
             delete(j);
         }
+
     }
 }

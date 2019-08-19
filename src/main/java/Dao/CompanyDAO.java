@@ -1,43 +1,62 @@
 package Dao;
 
-import POJO.Company;
-import org.hibernate.HibernateException;
+import POJO.*;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
-import Utils.*;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.service.ServiceRegistry;
 import java.util.List;
-import java.util.Properties;
-// check again (unchecked)
-public class CompanyDAO implements DaoInterface<Company, Integer> { // Id as String is probably unsuitable implementation
+public class CompanyDAO implements DaoInterface<Company, Integer> {
     private Session session;
     private Transaction transaction;
-    private static SessionFactory sessionFactory;
-
-    private static SessionFactory getSessionFactory() {
-        if (sessionFactory == null) {
-            try {
-                Configuration configuration = new Configuration();
-                Properties settings = new Properties();
-                settings = Settings.getSettings();
-                configuration.addAnnotatedClass(Company.class);
-                configuration.setProperties(settings);
-                ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()
-                        .applySettings(configuration.getProperties()).build();
-                sessionFactory = configuration.buildSessionFactory(serviceRegistry);
-
-            } catch (HibernateException e) {
-                e.printStackTrace();
-            }
-        }
-        return sessionFactory;
-    }
 
     public CompanyDAO() {
     }
+
+    public Session openCurrentSession() {
+        session = getSessionFactory().openSession();
+        return session;
+    }
+
+    public Session openCurrentSessionwithTransaction() {
+        session = getSessionFactory().openSession();
+        transaction = session.beginTransaction();
+        return session;
+    }
+
+    public void closeCurrentSession() {
+        session.close();
+    }
+
+    public void closeCurrentSessionwithTransaction() {
+        transaction.commit();
+        session.close();
+    }
+
+
+    private static SessionFactory getSessionFactory() {
+        Configuration configuration = new Configuration();
+        configuration.addAnnotatedClass(Company.class);
+        configuration.addAnnotatedClass(Employee.class);
+        configuration.addAnnotatedClass(Employer.class);
+        configuration.addAnnotatedClass(Job.class);
+        configuration.addAnnotatedClass(Rating.class);
+        configuration.addAnnotatedClass(Tag.class);
+        configuration.configure();
+        StandardServiceRegistryBuilder builder = new StandardServiceRegistryBuilder()
+                .applySettings(configuration.getProperties());
+        SessionFactory sessionFactory = configuration.buildSessionFactory(builder.build());
+        return sessionFactory;
+    }
+
+
+
+
+
+
+
+
 
     public Session getSession() {
         return session;
@@ -45,37 +64,20 @@ public class CompanyDAO implements DaoInterface<Company, Integer> { // Id as Str
 
     public void setSession(Session session) {
         this.session = session;
-    } // noodles
+    }
 
     public Transaction getTransaction() {
         return transaction;
-    } // noodles
+    }
 
     public void setTransaction(Transaction transaction) {
         this.transaction = transaction;
     }
 
-    public static void setSessionFactory(SessionFactory sessionFactory) {
-        CompanyDAO.sessionFactory = sessionFactory;
-    }
 
-    public Session openSession() { // noodles
-        session = getSessionFactory().openSession();
-        return session;
-    }
-    public Session openSessionWithTransaction() { // noodles
-        session = getSessionFactory().openSession();
-        transaction = session.beginTransaction();
-        return session;
-    }
 
-    public void closeSession() {
-        session.close();
-    }
-    public void closeSessionWithTransaction() {
-        transaction.commit();
-        session.close();
-    }
+
+
 
     @Override
     public void persist(Company entity) {
@@ -89,7 +91,7 @@ public class CompanyDAO implements DaoInterface<Company, Integer> { // Id as Str
 
     @Override
     public Company findById(Integer id) {
-        Company company = (Company) getSession().get(Company.class, id);
+        Company company =(Company)getSession().get(Company.class, id);
         return company;
     }
 
@@ -97,17 +99,18 @@ public class CompanyDAO implements DaoInterface<Company, Integer> { // Id as Str
     public void delete(Company entity) {
         getSession().delete(entity);
     }
-
+    @SuppressWarnings("unchecked")
     @Override
     public List<Company> findAll() {
-        List<Company> companies = (List<Company>) getSession().createQuery("from Company").list();
+        List<Company> companies = (List<Company>)getSession().createQuery("from Company").list();
         return companies;
     }
 
+
     @Override
     public void deleteAll() {
-        List<Company> companyList = findAll();
-        for (Company c : companyList)
+        List<Company> companies = findAll();
+        for (Company c : companies)
         {
             delete(c);
         }

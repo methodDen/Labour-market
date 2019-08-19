@@ -1,35 +1,17 @@
 package POJO;
 
-import POJO.Company;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
 
 @Entity
-@Table(name = "POJO.EmployerDAO")
+@Table(name = "Employer")
 public class Employer {
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     @Column(name = "employerId")
     private int id;
-
-    @Override
-    public String toString() {
-        return "Employer{" +
-                "id=" + id +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", region='" + region + '\'' +
-                ", email='" + email + '\'' +
-                ", extraEmail='" + extraEmail + '\'' +
-                ", password='" + password + '\'' +
-                ", companyId=" + companyId +
-                ", creditCardId=" + creditCardId +
-                ", employerRole='" + employerRole + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                '}';
-    }
 
     public Employer() {
     }
@@ -52,6 +34,17 @@ public class Employer {
     @Column(name = "password")
     private String password; // sensitive data, cypher
 
+
+    @Column(name = "profileDescription")
+    private String profileDescription;
+
+    public String getProfileDescription() {
+        return profileDescription;
+    }
+
+    public void setProfileDescription(String profileDescription) {
+        this.profileDescription = profileDescription;
+    }
 
     @Column(name = "companyId")
     private long companyId;         // sensitive data
@@ -177,8 +170,43 @@ public class Employer {
             inverseJoinColumns = @JoinColumn(name = "companyId"))
     private Collection<Company> companies = new ArrayList<>();
 
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "ratingId")
+    private Rating rating;
+
+
     public Collection<Company> getCompanies() {
         return companies;
+    }
+
+    @Override
+    public String toString() {
+        return "Employer{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", region='" + region + '\'' +
+                ", email='" + email + '\'' +
+                ", extraEmail='" + extraEmail + '\'' +
+                ", password='" + password + '\'' +
+                ", profileDescription='" + profileDescription + '\'' +
+                ", companyId=" + companyId +
+                ", creditCardId=" + creditCardId +
+                ", employerRole='" + employerRole + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", tags=" + tags +
+                ", companies=" + companies +
+                ", rating=" + rating +
+                '}';
+    }
+
+    public Rating getRating() {
+        return rating;
+    }
+
+    public void setRating(Rating rating) {
+        this.rating = rating;
     }
 
     public void setCompanies(Collection<Company> companies) {

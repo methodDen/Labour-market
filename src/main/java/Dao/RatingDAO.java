@@ -8,11 +8,11 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 
 import java.util.List;
-public class EmployerDAO implements DaoInterface<Employer, Integer> {
+public class RatingDAO implements DaoInterface<Rating, Integer> {
     private Session session;
     private Transaction transaction;
 
-    public EmployerDAO() {
+    public RatingDAO() {
     }
 
     public Session openCurrentSession() {
@@ -68,40 +68,40 @@ public class EmployerDAO implements DaoInterface<Employer, Integer> {
 
 
     @Override
-    public void persist(Employer entity) {
+    public void persist(Rating entity) {
         getSession().save(entity);
     }
 
     @Override
-    public void update(Employer entity) {
+    public void update(Rating entity) {
         getSession().update(entity);
     }
 
     @Override
-    public Employer findById(Integer id) {
-        Employer employer =(Employer) getSession().get(Employer.class, id);
-        return employer;
+    public Rating findById(Integer id) {
+        Rating rating = (Rating) getSession().get(Rating.class, id);
+        return rating;
 
     }
 
     @Override
-    public void delete(Employer entity) {
+    public void delete(Rating entity) {
         getSession().delete(entity);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<Employer> findAll() {
-        List<Employer> employers = (List<Employer>)getSession().createQuery("from Employer").list();
-        return employers;
+    public List<Rating> findAll() {
+        List<Rating> ratings = (List<Rating>)getSession().createQuery("from Rating").list();
+        return ratings;
     }
 
     @Override
     public void deleteAll() {
-        List<Employer> employers = findAll();
-        for (Employer e : employers)
+        List<Rating> ratings = findAll();
+        for (Rating r : ratings)
         {
-            delete(e);
+            delete(r);
         }
 
     }

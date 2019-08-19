@@ -1,35 +1,26 @@
-import POJO.Employee;
-import POJO.Job;
-import POJO.Person;
-import Utils.HibernateUtils;
-import org.hibernate.Session;
+import Controller.*;
+import Utils.Constants;
+import Utils.JacksonUtils;
+import io.javalin.Javalin;
+import io.javalin.json.JavalinJackson;
 
-import java.sql.SQLException;
-import java.util.List;
+import static io.javalin.apibuilder.ApiBuilder.crud;
 
 public class Main {
-    public static void main(String[] args) throws SQLException {
-        HibernateUtils.startServer();
-        PersonDao personDao = new PersonDao();
-        Person person = new Person("Daniyar", "Absatov");
-        Person a = new Person("A", "B");
-        personDao.savePerson(a);
-        personDao.savePerson(person);
-        List<Person> personList = personDao.getPersons();
-        personList.forEach(s-> System.out.println(s.getFirstName()));
-        Employee e = new Employee();
-        e.setFirstName("Daniyar");
-        e.setLastName("Absatov");
-        Job job = new Job();
-        job.setJobName("Code developer");
-        job.setProcessInfo("In Process");
-        e.getJobs().add(job);
-        Session session = HibernateUtils.getSessionFactory().openSession();
-        session.beginTransaction();
-        session.save(e);
-        session.getTransaction().commit();
-        session.close();
+    public static void main(String[] args) {
+        Javalin app = Javalin.create()
+                .port(Constants.PORT);
+        JavalinJackson.configure(JacksonUtils.getMapper());
+        app.routes(()->{
+            crud("company/:id", new CompanyController());
+            crud("employee/:id", new EmployeeController());
+            crud("employer/:id", new EmployerController());
+            crud("job/:id", new JobController());
+            crud("rating/:id", new RatingController());
+            crud("tag/:id", new TagController());
+        });
+        app.start();
+
+
     }
-
-
 }
