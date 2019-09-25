@@ -6,6 +6,9 @@ import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.github.daniyar.trademarket.Dao.CompanyDAO;
+import com.github.daniyar.trademarket.Dao.RatingDAO;
+import com.github.daniyar.trademarket.Dao.TagDAO;
 import com.github.daniyar.trademarket.POJO.*;
 import org.slf4j.LoggerFactory;
 
@@ -39,19 +42,23 @@ public class EmployerDeserializer extends StdDeserializer<Employer> {
         String employerRole =  jsonNode.get("employerRole").asText();
         String phoneNumber = jsonNode.get("phoneNumber").asText();
         ArrayNode tagNode = (ArrayNode) jsonNode.get("tags");
-        List<Tag> tags = new ArrayList<Tag>();
+        List<Tag> tags = new ArrayList<>();
         for (Iterator<JsonNode> it = tagNode.elements(); it.hasNext(); ) {
             JsonNode element = it.next();
-            Tag t = new Tag(0, element.get("tagName").asText());
+            int id = element.asInt();
+            Tag t = new TagDAO().findById(id);
             tags.add(t);
         }
 
-//        int ratingId = jsonNode.get("ratingId").asInt();
-//        int companyId = jsonNode.get("companyId").asInt();
-//        Create Company and Rating entities; find by Id using DAO; get rating Id and companyId; store them in deserializer
+         int companyId = jsonNode.get("companyId").asInt();
+        Company c = new CompanyDAO().findById(companyId);
+        int ratingId = jsonNode.get("ratingId").asInt();
+        Rating r = new RatingDAO().findById(ratingId);
+
+
         return new Employer(0, firstName, lastName, region, email, extraEmail,
                         password, profileDescription,
-                        creditCardId, employerRole, phoneNumber, tags, null, null);
+                        creditCardId, employerRole, phoneNumber, tags,  c, r);
 
 //        Employer employer = new Employer();
 //        employer.setTags(tags);

@@ -1,7 +1,11 @@
 package com.github.daniyar.trademarket.Controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.github.daniyar.trademarket.Dao.JobDAO;
+import com.github.daniyar.trademarket.Deserializers.JobDeserializer;
 import com.github.daniyar.trademarket.POJO.Job;
+import com.github.daniyar.trademarket.Serializers.JobSerializer;
 import com.github.daniyar.trademarket.Utils.Constants;
 import io.javalin.Context;
 import io.javalin.apibuilder.CrudHandler;
@@ -30,8 +34,13 @@ public class JobController implements CrudHandler {
 
     @Override
     public void create(@NotNull Context context) {
-        Job job = context.bodyAsClass(Job.class);
+        ObjectMapper objectMapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+        module.addDeserializer(Job.class, new JobDeserializer());
+        objectMapper.registerModule(module);
+        String json = context.body();
         try {
+            Job job = objectMapper.readValue(json, Job.class);
             jobDAO.persist(job);
         } catch (Exception e) {
             e.printStackTrace();
@@ -55,8 +64,12 @@ public class JobController implements CrudHandler {
 
     @Override
     public void getAll(@NotNull Context context) {
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+        module.addSerializer(Job.class, new JobSerializer());
+        mapper.registerModule(module);
         try {
-            context.json(jobDAO().findAll());
+            context.result(mapper.writeValueAsString(jobDAO().findAll()));
             context.status(Constants.OK_200);
         } catch (Exception e) {
             e.printStackTrace();
@@ -67,11 +80,16 @@ public class JobController implements CrudHandler {
 
     @Override
     public void getOne(@NotNull Context context, @NotNull String s) {
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+        module.addSerializer(Job.class, new JobSerializer());
+        mapper.registerModule(module);
         int jobId = Integer.valueOf(s);
         try {
             Job job = jobDAO.findById(jobId);
             if (job != null){
-                context.json(job);
+                context.result(mapper.writeValueAsString(job));
+                context.status(Constants.OK_200);
             } else {
                 context.status(Constants.NOT_FOUND);
             }

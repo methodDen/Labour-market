@@ -1,7 +1,11 @@
 package com.github.daniyar.trademarket.Controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.github.daniyar.trademarket.Dao.TagDAO;
+import com.github.daniyar.trademarket.Deserializers.TagDeserializer;
 import com.github.daniyar.trademarket.POJO.Tag;
+import com.github.daniyar.trademarket.Serializers.TagSerializer;
 import com.github.daniyar.trademarket.Utils.Constants;
 import io.javalin.Context;
 import io.javalin.apibuilder.CrudHandler;
@@ -30,8 +34,14 @@ public class TagController implements CrudHandler {
 
     @Override
     public void create(@NotNull Context context) {
-        Tag tag = context.bodyAsClass(Tag.class);
+        ObjectMapper objectMapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+        module.addDeserializer(Tag.class, new TagDeserializer());
+        objectMapper.registerModule(module);
+        String json = context.body();
+
         try {
+            Tag tag = objectMapper.readValue(json, Tag.class);
             tagDAO.persist(tag);
         } catch (Exception e) {
             e.printStackTrace();
@@ -55,8 +65,12 @@ public class TagController implements CrudHandler {
 
     @Override
     public void getAll(@NotNull Context context) {
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+        module.addSerializer(Tag.class, new TagSerializer());
+        mapper.registerModule(module);
         try {
-            context.json(tagDAO().findAll());
+            context.result(mapper.writeValueAsString(tagDAO().findAll()));
             context.status(Constants.OK_200);
         } catch (Exception e) {
             e.printStackTrace();
@@ -67,11 +81,16 @@ public class TagController implements CrudHandler {
 
     @Override
     public void getOne(@NotNull Context context, @NotNull String s) {
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+        module.addSerializer(Tag.class, new TagSerializer());
+        mapper.registerModule(module);
         int tagId = Integer.valueOf(s);
         try {
             Tag tag = tagDAO.findById(tagId);
             if (tag != null){
-                context.json(tag);
+                context.result(mapper.writeValueAsString(tag));
+                context.status(Constants.OK_200);
             } else {
                 context.status(Constants.NOT_FOUND);
             }

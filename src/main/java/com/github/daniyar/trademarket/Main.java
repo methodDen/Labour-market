@@ -10,7 +10,7 @@ import org.h2.tools.Server;
 
 import java.sql.SQLException;
 
-import static io.javalin.apibuilder.ApiBuilder.crud;
+import static io.javalin.apibuilder.ApiBuilder.*;
 
 public class Main {
     public static void main(String[] args) {
@@ -18,12 +18,19 @@ public class Main {
                 .port(Constants.PORT);
         JavalinJackson.configure(JacksonUtils.getMapper());
         app.routes(()->{
-            crud("company/:id", new CompanyController());
+//            crud("company/:id", new CompanyController());
             crud("employee/:id", new EmployeeController());
             crud("employer/:id", new EmployerController());
             crud("job/:id", new JobController());
             crud("rating/:id", new RatingController());
             crud("tag/:id", new TagController());
+
+            path("company", ()-> {
+                get("/unsecured", ctx -> new CompanyController().getAllforUsers(ctx));
+                get("/secured", ctx -> new CompanyController().getAll(ctx));
+                get("/:id", ctx -> new CompanyController().getOne(ctx, ctx.pathParam("id")));
+                post(ctx-> new CompanyController().create(ctx));
+            });
         });
         app.start();
         try {

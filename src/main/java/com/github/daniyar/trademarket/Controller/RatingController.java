@@ -1,7 +1,11 @@
 package com.github.daniyar.trademarket.Controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.github.daniyar.trademarket.Dao.RatingDAO;
+import com.github.daniyar.trademarket.Deserializers.RatingDeserializer;
 import com.github.daniyar.trademarket.POJO.Rating;
+import com.github.daniyar.trademarket.Serializers.RatingSerializer;
 import com.github.daniyar.trademarket.Utils.Constants;
 import io.javalin.Context;
 import io.javalin.apibuilder.CrudHandler;
@@ -30,8 +34,14 @@ public class RatingController implements CrudHandler {
 
     @Override
     public void create(@NotNull Context context) {
-        Rating rating = context.bodyAsClass(Rating.class);
+        ObjectMapper objectMapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+        module.addDeserializer(Rating.class, new RatingDeserializer());
+        objectMapper.registerModule(module);
+        String json = context.body();
+
         try {
+            Rating rating = objectMapper.readValue(json, Rating.class);
             ratingDAO.persist(rating);
         } catch (Exception e) {
             e.printStackTrace();
@@ -55,8 +65,12 @@ public class RatingController implements CrudHandler {
 
     @Override
     public void getAll(@NotNull Context context) {
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+        module.addSerializer(Rating.class, new RatingSerializer());
+        mapper.registerModule(module);
         try {
-            context.json(ratingDAO().findAll());
+            context.result(mapper.writeValueAsString(ratingDAO().findAll()));
             context.status(Constants.OK_200);
         } catch (Exception e) {
             e.printStackTrace();
@@ -67,11 +81,16 @@ public class RatingController implements CrudHandler {
 
     @Override
     public void getOne(@NotNull Context context, @NotNull String s) {
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+        module.addSerializer(Rating.class, new RatingSerializer());
+        mapper.registerModule(module);
         int ratingId = Integer.valueOf(s);
         try {
-            Rating rating = ratingDAO.findById(ratingId);
+            Rating rating  = ratingDAO.findById(ratingId);
             if (rating != null){
-                context.json(rating);
+                context.result(mapper.writeValueAsString(rating));
+                context.status(Constants.OK_200);
             } else {
                 context.status(Constants.NOT_FOUND);
             }

@@ -6,6 +6,7 @@ import com.github.daniyar.trademarket.Dao.CompanyDAO;
 import com.github.daniyar.trademarket.Deserializers.CompanyDeserializer;
 import com.github.daniyar.trademarket.POJO.Company;
 import com.github.daniyar.trademarket.Serializers.CompanySerializer;
+import com.github.daniyar.trademarket.UserSerializers.CompanyUserSerializer;
 import com.github.daniyar.trademarket.Utils.Constants;
 import io.javalin.Context;
 import io.javalin.apibuilder.CrudHandler;
@@ -78,6 +79,22 @@ public class CompanyController implements CrudHandler {
             context.status(Constants.INTERNAL_SERVER_ERROR);
         }
     }
+
+    public void getAllforUsers(@NotNull Context context) {
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+        module.addSerializer(Company.class, new CompanyUserSerializer());
+        mapper.registerModule(module);
+        try {
+            context.result(mapper.writeValueAsString(companyDAO().findAll()));
+            context.status(Constants.OK_200);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error("Error occured getting records");
+            context.status(Constants.INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
     @Override
     public void getOne(@NotNull Context context, @NotNull String s) {

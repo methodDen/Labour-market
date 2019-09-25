@@ -2,10 +2,10 @@ package com.github.daniyar.trademarket.POJO;
 
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @Entity
@@ -46,10 +46,9 @@ public class Employer {
     @Column(name = "phoneNumber")
     private String phoneNumber; // use another type
 
-    //Image
-    // foreign keys and relations
 
-    @JsonBackReference
+
+    @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             joinColumns = { @JoinColumn(referencedColumnName = "employerId") },
@@ -95,6 +94,50 @@ public class Employer {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
+    }
+
+    public Employer(int id, String firstName, String lastName, String region, String email, String extraEmail, String password, String profileDescription, long creditCardId,
+                    String employerRole, String phoneNumber, List<Tag> tags) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.region = region;
+        this.email = email;
+        this.extraEmail = extraEmail;
+        this.password = password;
+        this.profileDescription = profileDescription;
+        this.creditCardId = creditCardId;
+        this.employerRole = employerRole;
+        this.phoneNumber = phoneNumber;
+    }
+
+    public Employer(int id, String firstName, String lastName, String region, String email, String extraEmail, String password, String profileDescription, long creditCardId, String employerRole, String phoneNumber) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.region = region;
+        this.email = email;
+        this.extraEmail = extraEmail;
+        this.password = password;
+        this.profileDescription = profileDescription;
+        this.creditCardId = creditCardId;
+        this.employerRole = employerRole;
+        this.phoneNumber = phoneNumber;
+    }
+
+    public Employer(int id, String firstName, String lastName, String region, String email, String extraEmail, String password, String profileDescription, long creditCardId, String employerRole, String phoneNumber, Company company) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.region = region;
+        this.email = email;
+        this.extraEmail = extraEmail;
+        this.password = password;
+        this.profileDescription = profileDescription;
+        this.creditCardId = creditCardId;
+        this.employerRole = employerRole;
+        this.phoneNumber = phoneNumber;
+        this.company = company;
     }
 
     public int getId() {

@@ -1,0 +1,40 @@
+package com.github.daniyar.trademarket.UserSerializers;
+
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import com.github.daniyar.trademarket.POJO.Company;
+import com.github.daniyar.trademarket.POJO.Employer;
+
+import java.io.IOException;
+import java.util.List;
+
+public class CompanyUserSerializer extends StdSerializer<Company> {
+
+
+    protected CompanyUserSerializer(Class<Company> t) {
+        super(t);
+    }
+
+    public CompanyUserSerializer() {
+        this(null);
+    }
+
+    @Override
+    public void serialize(Company company, JsonGenerator jsonGenerator, SerializerProvider serializerProvider) throws IOException {
+        jsonGenerator.writeStartObject();
+        jsonGenerator.writeStringField("companyName", company.getCompanyName());
+        jsonGenerator.writeArrayFieldStart("employers");
+        List<Employer> employers = company.getEmployers();
+        for (Employer employer : employers){
+            jsonGenerator.writeStartObject();
+            jsonGenerator.writeNumberField("id", employer.getId());
+            jsonGenerator.writeStringField("firstName", employer.getFirstName());
+            jsonGenerator.writeStringField("lastName", employer.getLastName());
+            jsonGenerator.writeEndObject();
+        }
+        jsonGenerator.writeEndArray();
+        jsonGenerator.writeEndObject();
+
+    }
+}

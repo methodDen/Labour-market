@@ -14,7 +14,7 @@ public class Rating {
     private int ratingId;
 
     @Column(name = "ratingOfEmployee")
-    private int ratingOfEmployee;
+    private int ratingOfEmployee; // somehow connect POST of Employee with this property
 
     @Column(name = "ratingOfEmployer")
     private int ratingOfEmployer;
@@ -25,14 +25,16 @@ public class Rating {
     @Column(name = "commentOfEmployer")
     private String commentOfEmployer;
 
-    @OneToOne(mappedBy = "rating")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(referencedColumnName = "jobId")
     private Job job;
 
-    @OneToOne(mappedBy = "rating")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(referencedColumnName = "employeeId")
     private Employee employee;
 
-    @JsonManagedReference // Ok
-    @OneToOne(mappedBy = "rating")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(referencedColumnName = "employerId")
     private Employer employer;
 
     public Rating() {
@@ -116,4 +118,5 @@ public class Rating {
     public void setEmployer(Employer employer) {
         this.employer = employer;
     }
+
 }

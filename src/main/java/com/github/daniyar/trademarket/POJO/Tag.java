@@ -19,12 +19,22 @@ public class Tag {
 
 //    @JsonManagedReference
     @JsonIgnore
-    @ManyToMany(mappedBy = "tags")
+    @ManyToMany
+    @JoinTable(
+            joinColumns = { @JoinColumn(referencedColumnName = "tagId") },
+            inverseJoinColumns = { @JoinColumn(referencedColumnName = "employerId") }
+    )
     private List<Employer> employers;
 
     public Tag(int id, String tagName) {
         this.id = id;
         this.tagName = tagName;
+    }
+
+    public Tag(int id, String tagName, List<Employer> employers) {
+        this.id = id;
+        this.tagName = tagName;
+        this.employers = employers;
     }
 
     public int getId() {
@@ -33,6 +43,14 @@ public class Tag {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public List<Employer> getEmployers() {
+        return employers;
+    }
+
+    public void setEmployers(List<Employer> employers) {
+        this.employers = employers;
     }
 
     public Tag() {

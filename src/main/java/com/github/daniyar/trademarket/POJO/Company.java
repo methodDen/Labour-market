@@ -27,7 +27,10 @@ public class Company {
     }
 
     //    @JsonManagedReference
-    @OneToMany(mappedBy = "company")
+    @OneToMany
+    @JoinTable(name = "Company_Employer",
+            joinColumns = @JoinColumn(referencedColumnName = "companyId"),
+            inverseJoinColumns = @JoinColumn(referencedColumnName = "employerId"))
     private List<Employer> employers;
 
 
