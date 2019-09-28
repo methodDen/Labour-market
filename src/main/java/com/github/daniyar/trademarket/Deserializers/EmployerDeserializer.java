@@ -60,11 +60,6 @@ public class EmployerDeserializer extends StdDeserializer<Employer> {
                         password, profileDescription,
                         creditCardId, employerRole, phoneNumber, tags, c,  r);
 
-//        Employer employer = new Employer();
-//        employer.setTags(tags);
-//        employer.setEmail(email);
-//        employer.setFirstName(firstName);
-//        return employer;
     }
 
 

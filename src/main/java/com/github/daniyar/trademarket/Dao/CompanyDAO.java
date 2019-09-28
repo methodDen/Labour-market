@@ -34,6 +34,7 @@ public class CompanyDAO implements DaoInterface<Company, Integer> {
     public Company findById(Integer id) {
         Session session = HibernateUtils.getSession();
         Company company =(Company)session.get(Company.class, id);
+        session.close();
         return company;
     }
 
@@ -51,6 +52,7 @@ public class CompanyDAO implements DaoInterface<Company, Integer> {
     public List<Company> findAll() {
         Session session = HibernateUtils.getSession();
         List<Company> companies = (List<Company>)session.createQuery("from Company").list();
+        session.close();
         return companies;
     }
 

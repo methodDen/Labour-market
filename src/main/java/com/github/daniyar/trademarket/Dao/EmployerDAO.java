@@ -35,6 +35,7 @@ public class EmployerDAO implements DaoInterface<Employer, Integer> {
     public Employer findById(Integer id) {
         Session session = HibernateUtils.getSession();
         Employer employer =(Employer) session.get(Employer.class, id);
+        session.close();
         return employer;
     }
 
