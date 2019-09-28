@@ -140,6 +140,8 @@ public class Employer {
         this.company = company;
     }
 
+
+
     public int getId() {
         return id;
     }

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "Company")
@@ -20,18 +21,15 @@ public class Company {
 
     }
 
-    public Company(int id, String companyName, List<Employer> employers) {
+    public Company(int id, String companyName, Set<Employer> employers) {
         this.id = id;
         this.companyName = companyName;
         this.employers = employers;
     }
 
     //    @JsonManagedReference
-    @OneToMany
-    @JoinTable(name = "Company_Employer",
-            joinColumns = @JoinColumn(referencedColumnName = "companyId"),
-            inverseJoinColumns = @JoinColumn(referencedColumnName = "employerId"))
-    private List<Employer> employers;
+    @OneToMany(mappedBy = "company")
+    private Set<Employer> employers;
 
 
 
@@ -52,11 +50,11 @@ public class Company {
         this.companyName = companyName;
     }
 
-    public List<Employer> getEmployers() {
+    public Set<Employer> getEmployers() {
         return employers;
     }
 
-    public void setEmployers(List<Employer> employers) {
+    public void setEmployers(Set<Employer> employers) {
         this.employers = employers;
     }
 

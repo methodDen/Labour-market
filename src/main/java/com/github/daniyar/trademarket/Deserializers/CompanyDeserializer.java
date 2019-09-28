@@ -11,9 +11,7 @@ import com.github.daniyar.trademarket.POJO.Company;
 import com.github.daniyar.trademarket.POJO.Employer;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class CompanyDeserializer extends StdDeserializer<Company> {
 
@@ -32,7 +30,7 @@ public class CompanyDeserializer extends StdDeserializer<Company> {
         String companyName = jsonNode.get("companyName").asText();
         ArrayNode employerNode = (ArrayNode) jsonNode.get("employers");
 
-        List<Employer> employers = new ArrayList<>(); // List of employers is retrieved from database and stored here
+        Set<Employer> employers = new HashSet<>(); // List of employers is retrieved from database and stored here
         for (Iterator<JsonNode> it = employerNode.elements(); it.hasNext(); ) {
             JsonNode element = it.next();
             int id = element.asInt();

@@ -8,7 +8,9 @@ import com.github.daniyar.trademarket.POJO.Employer;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 public class CompanySerializer extends StdSerializer<Company> {
 
@@ -27,7 +29,7 @@ public class CompanySerializer extends StdSerializer<Company> {
         jsonGenerator.writeNumberField("companyId", company.getId());
         jsonGenerator.writeStringField("companyName", company.getCompanyName());
         jsonGenerator.writeArrayFieldStart("employers");
-        List<Employer> employers = company.getEmployers();
+        Collection<Employer> employers = company.getEmployers();
         for (Employer employer : employers){
             jsonGenerator.writeStartObject();
             jsonGenerator.writeNumberField("id", employer.getId());

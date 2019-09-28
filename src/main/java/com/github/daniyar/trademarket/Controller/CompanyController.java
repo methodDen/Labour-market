@@ -33,22 +33,7 @@ public class CompanyController implements CrudHandler {
     }
 
 
-    @Override
-    public void create(@NotNull Context context) {
-        ObjectMapper mapper = new ObjectMapper();
-        SimpleModule module = new SimpleModule();
-        module.addDeserializer(Company.class, new CompanyDeserializer());
-        mapper.registerModule(module);
-        String json = context.body();
 
-        try {
-            Company company = mapper.readValue(json, Company.class);
-            companyDAO().persist(company);
-        } catch (Exception e) {
-            e.printStackTrace();
-            logger.error("Error occured creating a record");
-        }
-    }
 
     @Override
     public void delete(@NotNull Context context, @NotNull String s) {
@@ -119,11 +104,35 @@ public class CompanyController implements CrudHandler {
     }
 
     @Override
+    public void create(@NotNull Context context) {
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+        module.addDeserializer(Company.class, new CompanyDeserializer());
+        mapper.registerModule(module);
+        String json = context.body();
+
+        try {
+            Company company = mapper.readValue(json, Company.class);
+            companyDAO().persist(company);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error("Error occured creating a record");
+        }
+    }
+
+    @Override
     public void update(@NotNull Context context, @NotNull String s) {
         int companyId = Integer.valueOf(s);
-        Company newCompany = context.bodyAsClass(Company.class);
-        newCompany.setId(companyId);
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+        module.addDeserializer(Company.class, new CompanyDeserializer());
+        mapper.registerModule(module);
+        String json = context.body();
+
         try {
+
+            Company newCompany = mapper.readValue(json, Company.class);
+            newCompany.setId(companyId);
             companyDAO().update(newCompany);
             context.status(Constants.OK_200);
         } catch (Exception e) {
