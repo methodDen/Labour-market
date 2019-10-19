@@ -27,7 +27,6 @@ public class Company {
         this.employers = employers;
     }
 
-    //    @JsonManagedReference
     @OneToMany(mappedBy = "company")
     private Set<Employer> employers;
 

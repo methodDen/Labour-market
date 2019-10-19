@@ -9,9 +9,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.github.daniyar.trademarket.POJO.*;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class JobDeserializer extends StdDeserializer<Job> {
 
@@ -42,7 +40,7 @@ public class JobDeserializer extends StdDeserializer<Job> {
         }
 
         ArrayNode employerNode = (ArrayNode) jsonNode.get("employers");
-        List<Employer> employers = new ArrayList<>();
+        Set<Employer> employers = new HashSet<>();
         for (Iterator<JsonNode> it = tagNode.elements(); it.hasNext(); ) {
             JsonNode element = it.next();
             Employer employer = new Employer(0, element.get("firstName").asText(), element.get("lastName").asText());

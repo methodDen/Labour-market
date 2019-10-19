@@ -6,7 +6,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "Employer")
@@ -25,26 +27,35 @@ public class Employer {
     @Column(name = "region")
     private String region;
 
+    @Column(name = "dateOfBirth")
+    private String dateOfBirth;
+
     @Column(name = "email")
     private String email;       // sensitive data
-
-    @Column(name = "extraEmail")
-    private String extraEmail;  // sensitive data
 
     @Column(name = "password")
     private String password; // sensitive data, cypher
 
-
-    @Column(name = "profileDescription")
-    private String profileDescription;
+    @Column(name = "phoneNumber")
+    private String phoneNumber;
 
     @Column(name = "paypalPurse")
     private long creditCardId;
 
+    @Column(name = "profileDescription")
+    private String profileDescription;
+
     @Column(name = "employerRole")
     private String employerRole;    // sensitive data
-    @Column(name = "phoneNumber")
-    private String phoneNumber; // use another type
+
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "Employer_Job",
+            joinColumns = {@JoinColumn(name = "employerId")},
+            inverseJoinColumns = {@JoinColumn(name = "jobId")}
+    )
+    Set<Job> jobs = new HashSet<>();
 
 
 
@@ -56,13 +67,11 @@ public class Employer {
     )
     private List<Tag> tags = new ArrayList<>();
 
-    // unserialized
-//    @JsonBackReference
     @ManyToOne
     @JoinColumn(referencedColumnName ="companyId")
     private Company company;
 
-    // unserialized
+
     @JsonBackReference
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(referencedColumnName = "ratingId")
@@ -79,7 +88,6 @@ public class Employer {
         this.lastName = lastName;
         this.region = region;
         this.email = email;
-        this.extraEmail = extraEmail;
         this.password = password;
         this.profileDescription = profileDescription;
         this.creditCardId = creditCardId;
@@ -103,7 +111,6 @@ public class Employer {
         this.lastName = lastName;
         this.region = region;
         this.email = email;
-        this.extraEmail = extraEmail;
         this.password = password;
         this.profileDescription = profileDescription;
         this.creditCardId = creditCardId;
@@ -117,7 +124,6 @@ public class Employer {
         this.lastName = lastName;
         this.region = region;
         this.email = email;
-        this.extraEmail = extraEmail;
         this.password = password;
         this.profileDescription = profileDescription;
         this.creditCardId = creditCardId;
@@ -131,7 +137,6 @@ public class Employer {
         this.lastName = lastName;
         this.region = region;
         this.email = email;
-        this.extraEmail = extraEmail;
         this.password = password;
         this.profileDescription = profileDescription;
         this.creditCardId = creditCardId;
@@ -140,7 +145,24 @@ public class Employer {
         this.company = company;
     }
 
-
+    public Employer(int id, String firstName, String lastName, String region, String email,
+                    String password, String profileDescription, long creditCardId, String employerRole,
+                    String phoneNumber, Set<Job> jobs, List<Tag> tags, Company company, Rating rating) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.region = region;
+        this.email = email;
+        this.password = password;
+        this.profileDescription = profileDescription;
+        this.creditCardId = creditCardId;
+        this.employerRole = employerRole;
+        this.phoneNumber = phoneNumber;
+        this.jobs = jobs;
+        this.tags = tags;
+        this.company = company;
+        this.rating = rating;
+    }
 
     public int getId() {
         return id;
@@ -162,12 +184,12 @@ public class Employer {
         this.region = region;
     }
 
-    public String getExtraEmail() {
-        return extraEmail;
+    public String getDateOfBirth() {
+        return dateOfBirth;
     }
 
-    public void setExtraEmail(String extraEmail) {
-        this.extraEmail = extraEmail;
+    public void setDateOfBirth(String dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
     }
 
     public String getPassword() {
@@ -222,14 +244,6 @@ public class Employer {
         this.email = email;
     }
 
-//    public long getCompanyId() {
-//        return companyId;
-//    }
-//
-//    public void setCompanyId(long companyId) {
-//        this.companyId = companyId;
-//    }
-
 
     public Company getCompany() {
         return company;
@@ -237,6 +251,14 @@ public class Employer {
 
     public void setCompany(Company company) {
         this.company = company;
+    }
+
+    public Set<Job> getJobs() {
+        return jobs;
+    }
+
+    public void setJobs(Set<Job> jobs) {
+        this.jobs = jobs;
     }
 
     public String getEmployerRole() {
@@ -272,7 +294,6 @@ public class Employer {
                 ", lastName='" + lastName + '\'' +
                 ", region='" + region + '\'' +
                 ", email='" + email + '\'' +
-                ", extraEmail='" + extraEmail + '\'' +
                 ", password='" + password + '\'' +
                 ", profileDescription='" + profileDescription + '\'' +
                 ", creditCardId=" + creditCardId +

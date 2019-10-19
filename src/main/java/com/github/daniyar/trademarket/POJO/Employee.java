@@ -46,7 +46,7 @@ public class Employee {
             inverseJoinColumns = @JoinColumn(referencedColumnName = "jobId"))
     private List<Job> jobs = new ArrayList<>();
 
-    @OneToMany
+    @ManyToMany
     @JoinTable (name = "Employee_Tag",
             joinColumns = @JoinColumn(referencedColumnName = "employeeId"),
             inverseJoinColumns = @JoinColumn(referencedColumnName = "tagId"))

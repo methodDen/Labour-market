@@ -53,6 +53,7 @@ public class EmployerDAO implements DaoInterface<Employer, Integer> {
     public List<Employer> findAll() {
         Session session = HibernateUtils.getSession();
         List<Employer> employers= (List<Employer>)session.createQuery("from Employer").list();
+        session.close();
         return employers;
     }
 

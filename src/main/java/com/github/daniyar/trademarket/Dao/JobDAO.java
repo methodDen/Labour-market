@@ -33,6 +33,7 @@ public class JobDAO implements DaoInterface<Job, Integer> {
     public Job findById(Integer id) {
         Session session = HibernateUtils.getSession();
         Job job =(Job) session.get(Job.class, id);
+        session.close();
         return job;
     }
 
@@ -50,6 +51,7 @@ public class JobDAO implements DaoInterface<Job, Integer> {
     public List<Job> findAll() {
         Session session = HibernateUtils.getSession();
         List<Job> jobs= (List<Job>)session.createQuery("from Job").list();
+        session.close();
         return jobs;
     }
 

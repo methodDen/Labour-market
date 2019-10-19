@@ -36,9 +36,6 @@ public class CompanyDeserializer extends StdDeserializer<Company> {
             int id = element.asInt();
             Employer newEmployer = new EmployerDAO().findById(id);
             employers.add(newEmployer);
-//            Employer e = new Employer(0, element.get("firstName").asText(), element.get("lastName").asText()); // get Employer by Id ->
-            // get Id from each Emloyer
-//            employers.add(e);
         }
         return new Company(0, companyName, employers);
     }

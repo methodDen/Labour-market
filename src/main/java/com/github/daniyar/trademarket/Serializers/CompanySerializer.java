@@ -28,6 +28,7 @@ public class CompanySerializer extends StdSerializer<Company> {
         jsonGenerator.writeStartObject();
         jsonGenerator.writeNumberField("companyId", company.getId());
         jsonGenerator.writeStringField("companyName", company.getCompanyName());
+
         jsonGenerator.writeArrayFieldStart("employers");
         Collection<Employer> employers = company.getEmployers();
         for (Employer employer : employers){
@@ -38,6 +39,8 @@ public class CompanySerializer extends StdSerializer<Company> {
             jsonGenerator.writeEndObject();
         }
         jsonGenerator.writeEndArray();
+
+
         jsonGenerator.writeEndObject();
     }
 }
