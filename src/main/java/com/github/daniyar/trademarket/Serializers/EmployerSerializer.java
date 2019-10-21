@@ -65,6 +65,11 @@ public class EmployerSerializer extends StdSerializer<Employer> {
 //        }
 //        jsonGenerator.writeEndArray();
 
+        //company
+        //rating
+
+        //check out for other fields
+
         jsonGenerator.writeEndObject();
     }
 }

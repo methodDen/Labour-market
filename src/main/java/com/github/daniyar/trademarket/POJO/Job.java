@@ -54,7 +54,7 @@ public class Job {
     private List<Tag> tags = new ArrayList<>();
 
 
-    @ManyToMany(mappedBy = "jobs") // mappedBy - name of jobs Set in Employer Class
+    @ManyToMany(mappedBy = "jobs", fetch = FetchType.EAGER) // mappedBy - name of jobs Set in Employer Class + fetch type
     private Set<Employer> employers = new HashSet<>();
 
 
@@ -118,8 +118,6 @@ public class Job {
     public String getRequirements() {
         return requirements;
     }
-
-
 
     public void setRequirements(String requirements) {
         this.requirements = requirements;

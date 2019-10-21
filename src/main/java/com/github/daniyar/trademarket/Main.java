@@ -18,10 +18,10 @@ public class Main {
                 .port(Constants.PORT);
         JavalinJackson.configure(JacksonUtils.getMapper());
         app.routes(()->{
-//            crud("company/:id", new CompanyController()); // write all paths manually
+//            crud("company/:id", new CompanyController());       // write all paths manually
             crud("employee/:id", new EmployeeController());
-//            crud("employer/:id", new EmployerController()); // write all paths manually
-            crud("job/:id", new JobController());
+            crud("employer/:id", new EmployerController()); // write all paths manually
+            crud("job/:id", new JobController());           // write all paths manually
             crud("rating/:id", new RatingController());
             crud("tag/:id", new TagController());
 
@@ -31,13 +31,20 @@ public class Main {
                 get("/unsecured/:id", ctx -> new CompanyController().getOneForUsers(ctx, ctx.pathParam("id")));
                 get("/secured/:id", ctx -> new CompanyController().getOne(ctx, ctx.pathParam("id")));
             });
+//
+//            path("employer", ()-> {
+//                get("/unsecured", ctx -> new EmployerController().getAllForUsers(ctx));
+//                get("/secured", ctx -> new EmployerController().getAll(ctx));
+//                get("/unsecured/:id", ctx -> new EmployerController().getOneForUsers(ctx, ctx.pathParam("id")));
+//                get("/secured/:id", ctx -> new EmployerController().getOne(ctx, ctx.pathParam("id")));
+//            });
 
-            path("employer", ()-> {
-                get("/unsecured", ctx -> new EmployerController().getAllForUsers(ctx));
-                get("/secured", ctx -> new EmployerController().getAll(ctx));
-                get("/unsecured/:id", ctx -> new EmployerController().getOneForUsers(ctx, ctx.pathParam("id")));
-                get("/secured/:id", ctx -> new EmployerController().getOne(ctx, ctx.pathParam("id")));
-            });
+//            path("job", ()-> {
+//                get("/unsecured", ctx -> new JobController().getAllForUsers(ctx));
+//                get("/secured", ctx -> new JobController().getAll(ctx));
+//                get("/unsecured/:id", ctx -> new JobController().getOneForUsers(ctx, ctx.pathParam("id")));
+//                get("/secured/:id", ctx -> new JobController().getOne(ctx, ctx.pathParam("id")));
+//            });
         });
         app.start();
         try {

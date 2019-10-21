@@ -6,6 +6,7 @@ import com.github.daniyar.trademarket.Dao.JobDAO;
 import com.github.daniyar.trademarket.Deserializers.JobDeserializer;
 import com.github.daniyar.trademarket.POJO.Job;
 import com.github.daniyar.trademarket.Serializers.JobSerializer;
+import com.github.daniyar.trademarket.UserSerializers.JobUserSerializer;
 import com.github.daniyar.trademarket.Utils.Constants;
 import io.javalin.Context;
 import io.javalin.apibuilder.CrudHandler;
@@ -13,7 +14,9 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JobController implements CrudHandler {
+public class JobController implements CrudHandler { // everything works,
+    // but when I try to assign other employerId to one certain job, it doesn't work ->
+    // should I create joinTable for Job and Employer??
     private static JobDAO jobDAO;
     private Logger logger;
 
@@ -45,6 +48,7 @@ public class JobController implements CrudHandler {
         } catch (Exception e) {
             e.printStackTrace();
             logger.error("Error occured creating a record");
+            context.status(Constants.BAD_REQUEST);
         }
     }
 
@@ -78,6 +82,23 @@ public class JobController implements CrudHandler {
         }
     }
 
+
+    public void getAllForUsers(@NotNull Context context) {
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+        module.addSerializer(Job.class, new JobUserSerializer());
+        mapper.registerModule(module);
+        try {
+            context.result(mapper.writeValueAsString(jobDAO().findAll()));
+            context.status(Constants.OK_200);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error("Error occured getting records");
+            context.status(Constants.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+
     @Override
     public void getOne(@NotNull Context context, @NotNull String s) {
         ObjectMapper mapper = new ObjectMapper();
@@ -100,12 +121,39 @@ public class JobController implements CrudHandler {
         }
     }
 
+
+    public void getOneForUsers(@NotNull Context context, @NotNull String s) {
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+        module.addSerializer(Job.class, new JobUserSerializer());
+        mapper.registerModule(module);
+        int jobId = Integer.valueOf(s);
+        try {
+            Job job = jobDAO.findById(jobId);
+            if (job != null){
+                context.result(mapper.writeValueAsString(job));
+                context.status(Constants.OK_200);
+            } else {
+                context.status(Constants.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error("Error occured getting a record");
+            context.status(Constants.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @Override
     public void update(@NotNull Context context, @NotNull String s) {
         int jobId = Integer.valueOf(s);
-        Job newJob = context.bodyAsClass(Job.class);
-        newJob.setId(jobId);
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+        module.addDeserializer(Job.class, new JobDeserializer());
+        mapper.registerModule(module);
+        String json = context.body();
         try {
+            Job newJob = mapper.readValue(json, Job.class);
+            newJob.setId(jobId);
             jobDAO().update(newJob);
             context.status(Constants.OK_200);
         } catch (Exception e) {
