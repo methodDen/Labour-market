@@ -15,7 +15,7 @@ import com.github.daniyar.trademarket.POJO.*;
 import java.io.IOException;
 import java.util.*;
 
-public class EmployerDeserializer extends StdDeserializer<Employer> {
+public class EmployerDeserializer extends StdDeserializer<Employer> { // tested
 
     protected EmployerDeserializer(Class<?> vc) {
         super(vc);
@@ -34,12 +34,15 @@ public class EmployerDeserializer extends StdDeserializer<Employer> {
         String email = jsonNode.get("email").asText();
         String password = jsonNode.get("password").asText();
         String profileDescription = jsonNode.get("profileDescription").asText();
-        long creditCardId = jsonNode.get("paypalPurse").asLong();
+        long paypalPurse = jsonNode.get("paypalPurse").asLong();
+        String dateOfBirth = jsonNode.get("dateOfBirth").asText();
         String employerRole =  jsonNode.get("employerRole").asText();
         String phoneNumber = jsonNode.get("phoneNumber").asText();
 
+        int ratingId = jsonNode.get("ratingId").asInt();
+        Rating r = new RatingDAO().findById(ratingId);
 
-        ArrayNode jobNode = (ArrayNode) jsonNode.get("jobs");
+        ArrayNode jobNode = (ArrayNode) jsonNode.get("jobs"); // testing
         Set<Job> jobs = new HashSet<>();
         for (Iterator<JsonNode> it = jobNode.elements(); it.hasNext(); ) {
             JsonNode element = it.next();
@@ -47,6 +50,9 @@ public class EmployerDeserializer extends StdDeserializer<Employer> {
             Job j = new JobDAO().findById(id);
             jobs.add(j);
         }
+
+         int companyId = jsonNode.get("companyId").asInt();  // tested
+         Company c = new CompanyDAO().findById(companyId);
 
 
         ArrayNode tagNode = (ArrayNode) jsonNode.get("tags");
@@ -58,17 +64,12 @@ public class EmployerDeserializer extends StdDeserializer<Employer> {
             tags.add(t);
         }
 
-         int companyId = jsonNode.get("companyId").asInt();
-         Company c = new CompanyDAO().findById(companyId);
 
-
-        int ratingId = jsonNode.get("ratingId").asInt();
-        Rating r = new RatingDAO().findById(ratingId);
 
 
         return new Employer(0, firstName, lastName, region, email,
                         password, profileDescription,
-                        creditCardId, employerRole, phoneNumber, jobs, tags, c,  r);
+                phoneNumber, paypalPurse , employerRole, dateOfBirth,jobs , tags, c,r);
 
     }
 

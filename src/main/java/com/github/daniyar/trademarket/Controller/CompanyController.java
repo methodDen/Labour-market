@@ -65,7 +65,7 @@ public class CompanyController implements CrudHandler {
         }
     }
 
-    public void getAllforUsers(@NotNull Context context) {
+    public void getAllForUsers(@NotNull Context context) {
         ObjectMapper mapper = new ObjectMapper();
         SimpleModule module = new SimpleModule();
         module.addSerializer(Company.class, new CompanyUserSerializer());
@@ -86,6 +86,27 @@ public class CompanyController implements CrudHandler {
         ObjectMapper mapper = new ObjectMapper();
         SimpleModule module = new SimpleModule();
         module.addSerializer(Company.class, new CompanySerializer());
+        mapper.registerModule(module);
+        int companyId = Integer.valueOf(s);
+        try {
+            Company c = companyDAO.findById(companyId);
+            if (c != null){
+                context.result(mapper.writeValueAsString(c));
+                context.status(Constants.OK_200);
+            } else {
+                context.status(Constants.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error("Error occured getting a record");
+            context.status(Constants.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public void getOneForUsers(@NotNull Context context, @NotNull String s) {
+        ObjectMapper mapper = new ObjectMapper();
+        SimpleModule module = new SimpleModule();
+        module.addSerializer(Company.class, new CompanyUserSerializer());
         mapper.registerModule(module);
         int companyId = Integer.valueOf(s);
         try {

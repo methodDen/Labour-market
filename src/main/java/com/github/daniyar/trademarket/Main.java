@@ -18,19 +18,26 @@ public class Main {
                 .port(Constants.PORT);
         JavalinJackson.configure(JacksonUtils.getMapper());
         app.routes(()->{
-            crud("company/:id", new CompanyController());
+//            crud("company/:id", new CompanyController()); // write all paths manually
             crud("employee/:id", new EmployeeController());
-            crud("employer/:id", new EmployerController());
+//            crud("employer/:id", new EmployerController()); // write all paths manually
             crud("job/:id", new JobController());
             crud("rating/:id", new RatingController());
             crud("tag/:id", new TagController());
-//
-//            path("company", ()-> {
-//                get("/unsecured", ctx -> new CompanyController().getAllforUsers(ctx));
-//                get("/secured", ctx -> new CompanyController().getAll(ctx));
-//                get("/:id", ctx -> new CompanyController().getOne(ctx, ctx.pathParam("id")));
-//                post(ctx-> new CompanyController().create(ctx));
-//            });
+
+            path("company", ()-> {
+                get("/unsecured", ctx -> new CompanyController().getAllForUsers(ctx));
+                get("/secured", ctx -> new CompanyController().getAll(ctx));
+                get("/unsecured/:id", ctx -> new CompanyController().getOneForUsers(ctx, ctx.pathParam("id")));
+                get("/secured/:id", ctx -> new CompanyController().getOne(ctx, ctx.pathParam("id")));
+            });
+
+            path("employer", ()-> {
+                get("/unsecured", ctx -> new EmployerController().getAllForUsers(ctx));
+                get("/secured", ctx -> new EmployerController().getAll(ctx));
+                get("/unsecured/:id", ctx -> new EmployerController().getOneForUsers(ctx, ctx.pathParam("id")));
+                get("/secured/:id", ctx -> new EmployerController().getOne(ctx, ctx.pathParam("id")));
+            });
         });
         app.start();
         try {

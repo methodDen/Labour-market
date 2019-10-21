@@ -29,7 +29,6 @@ public class CompanyUserSerializer extends StdSerializer<Company> {
         Collection<Employer> employers = company.getEmployers();
         for (Employer employer : employers){
             jsonGenerator.writeStartObject();
-            jsonGenerator.writeNumberField("id", employer.getId());
             jsonGenerator.writeStringField("firstName", employer.getFirstName());
             jsonGenerator.writeStringField("lastName", employer.getLastName());
             jsonGenerator.writeEndObject();

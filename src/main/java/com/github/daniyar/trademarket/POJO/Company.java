@@ -3,7 +3,6 @@ package com.github.daniyar.trademarket.POJO;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -27,10 +26,8 @@ public class Company {
         this.employers = employers;
     }
 
-    @OneToMany(mappedBy = "company")
+    @OneToMany(mappedBy = "company") // tested
     private Set<Employer> employers;
-
-
 
 
     public int getId() {

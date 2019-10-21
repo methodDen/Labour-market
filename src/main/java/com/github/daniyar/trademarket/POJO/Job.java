@@ -24,7 +24,7 @@ public class Job {
     private String paymentSum;
 
     @Column(name = "requirements") // list?
-    private String requirments;
+    private String requirements;
 
     @Column(name = "responsibilities")  // list?
     private String responsibilities;
@@ -38,8 +38,8 @@ public class Job {
     @Column(name = "durationInHours")
     private int duration;
 
-    @Column(name = "placeOfPerfomance")
-    private String placeOfPerfomance; // google maps???
+    @Column(name = "placeOfPerformance")
+    private String placeOfPerformance; // google maps???
 
 
     @Column(name = "processStatus")
@@ -53,8 +53,12 @@ public class Job {
             inverseJoinColumns = @JoinColumn(name = "tagId"))
     private List<Tag> tags = new ArrayList<>();
 
-    @ManyToMany(mappedBy = "employers")
+
+    @ManyToMany(mappedBy = "jobs") // mappedBy - name of jobs Set in Employer Class
     private Set<Employer> employers = new HashSet<>();
+
+
+
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(referencedColumnName =  "ratingId")
@@ -63,21 +67,41 @@ public class Job {
     public Job() {
     }
 
-    public Job(int id, String jobName) {
+    public Job(int id, String jobName) { // remove?
         this.id = id;
         this.jobName = jobName;
     }
 
-    public Job(int id, String jobName, String placeOfPerfomance, String dateOfCompletion,
+    public Job(int id, String jobName, String placeOfPerformance, String dateOfCompletion, // remove?
                String paymentSum, String processStatus, String jobDescription, List<Tag> tags,
                Set<Employer> employers, Rating rating) {
         this.id = id;
         this.jobName = jobName;
-        this.placeOfPerfomance = placeOfPerfomance;
+        this.placeOfPerformance = placeOfPerformance;
         this.dateOfCompletion = dateOfCompletion;
         this.paymentSum = paymentSum;
         this.processStatus = processStatus;
         this.jobDescription = jobDescription;
+        this.tags = tags;
+        this.employers = employers;
+        this.rating = rating;
+    }
+
+    public Job(int id, String jobName, String jobDescription, String paymentSum,
+               String requirements, String responsibilities, String workingTerms,
+               String dateOfCompletion, int duration, String placeOfPerformance,
+               String processStatus, List<Tag> tags, Set<Employer> employers, Rating rating) { // for JobDeserializer
+        this.id = id;
+        this.jobName = jobName;
+        this.jobDescription = jobDescription;
+        this.paymentSum = paymentSum;
+        this.requirements = requirements;
+        this.responsibilities = responsibilities;
+        this.workingTerms = workingTerms;
+        this.dateOfCompletion = dateOfCompletion;
+        this.duration = duration;
+        this.placeOfPerformance = placeOfPerformance;
+        this.processStatus = processStatus;
         this.tags = tags;
         this.employers = employers;
         this.rating = rating;
@@ -91,12 +115,14 @@ public class Job {
         this.id = id;
     }
 
-    public String getRequirments() {
-        return requirments;
+    public String getRequirements() {
+        return requirements;
     }
 
-    public void setRequirments(String requirments) {
-        this.requirments = requirments;
+
+
+    public void setRequirements(String requirements) {
+        this.requirements = requirements;
     }
 
     public String getResponsibilities() {
@@ -131,12 +157,12 @@ public class Job {
         this.jobName = jobName;
     }
 
-    public String getPlaceOfPerfomance() {
-        return placeOfPerfomance;
+    public String getPlaceOfPerformance() {
+        return placeOfPerformance;
     }
 
-    public void setPlaceOfPerfomance(String placeOfPerfomance) {
-        this.placeOfPerfomance = placeOfPerfomance;
+    public void setPlaceOfPerformance(String placeOfPerformance) {
+        this.placeOfPerformance = placeOfPerformance;
     }
 
     public String getDateOfCompletion() {

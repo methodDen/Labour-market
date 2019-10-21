@@ -27,7 +27,7 @@ public class JobSerializer extends StdSerializer<Job> {
         jsonGenerator.writeStartObject();
         jsonGenerator.writeNumberField("jobId", job.getId());
         jsonGenerator.writeStringField("jobName", job.getJobName());
-        jsonGenerator.writeStringField("placeOfPerfomance", job.getPlaceOfPerfomance());
+        jsonGenerator.writeStringField("placeOfPerformance", job.getPlaceOfPerformance());
         jsonGenerator.writeStringField("dateOfCompletion", job.getDateOfCompletion());
         jsonGenerator.writeStringField("paymentSum", job.getPaymentSum());
         jsonGenerator.writeStringField("processStatus", job.getProcessStatus());

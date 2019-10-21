@@ -40,7 +40,7 @@ public class Employer {
     private String phoneNumber;
 
     @Column(name = "paypalPurse")
-    private long creditCardId;
+    private long paypalPurse;
 
     @Column(name = "profileDescription")
     private String profileDescription;
@@ -49,7 +49,7 @@ public class Employer {
     private String employerRole;    // sensitive data
 
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER) // testing
     @JoinTable(
             name = "Employer_Job",
             joinColumns = {@JoinColumn(name = "employerId")},
@@ -60,7 +60,7 @@ public class Employer {
 
 
     @JsonIgnore
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL) // toTest
     @JoinTable(
             joinColumns = { @JoinColumn(referencedColumnName = "employerId") },
             inverseJoinColumns = { @JoinColumn(referencedColumnName = "tagId") }
@@ -68,12 +68,12 @@ public class Employer {
     private List<Tag> tags = new ArrayList<>();
 
     @ManyToOne
-    @JoinColumn(referencedColumnName ="companyId")
+    @JoinColumn(referencedColumnName ="companyId") // tested
     private Company company;
 
 
     @JsonBackReference
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL) // toTest
     @JoinColumn(referencedColumnName = "ratingId")
     private Rating rating;
 
@@ -81,7 +81,7 @@ public class Employer {
     }
 
     public Employer(int id, String firstName, String lastName, String region, String email, String extraEmail, String password,
-                    String profileDescription, long creditCardId,
+                    String profileDescription, long paypalPurse,
                     String employerRole, String phoneNumber, List<Tag> tags, Company company, Rating rating) {
         this.id = id;
         this.firstName = firstName;
@@ -90,7 +90,7 @@ public class Employer {
         this.email = email;
         this.password = password;
         this.profileDescription = profileDescription;
-        this.creditCardId = creditCardId;
+        this.paypalPurse = paypalPurse;
         this.employerRole = employerRole;
         this.phoneNumber = phoneNumber;
         this.tags = tags;
@@ -104,7 +104,7 @@ public class Employer {
         this.lastName = lastName;
     }
 
-    public Employer(int id, String firstName, String lastName, String region, String email, String extraEmail, String password, String profileDescription, long creditCardId,
+    public Employer(int id, String firstName, String lastName, String region, String email, String extraEmail, String password, String profileDescription, long paypalPurse,
                     String employerRole, String phoneNumber, List<Tag> tags) {
         this.id = id;
         this.firstName = firstName;
@@ -113,12 +113,12 @@ public class Employer {
         this.email = email;
         this.password = password;
         this.profileDescription = profileDescription;
-        this.creditCardId = creditCardId;
+        this.paypalPurse = paypalPurse;
         this.employerRole = employerRole;
         this.phoneNumber = phoneNumber;
     }
 
-    public Employer(int id, String firstName, String lastName, String region, String email, String extraEmail, String password, String profileDescription, long creditCardId, String employerRole, String phoneNumber) {
+    public Employer(int id, String firstName, String lastName, String region, String email, String extraEmail, String password, String profileDescription, long paypalPurse, String employerRole, String phoneNumber) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -126,12 +126,12 @@ public class Employer {
         this.email = email;
         this.password = password;
         this.profileDescription = profileDescription;
-        this.creditCardId = creditCardId;
+        this.paypalPurse = paypalPurse;
         this.employerRole = employerRole;
         this.phoneNumber = phoneNumber;
     }
 
-    public Employer(int id, String firstName, String lastName, String region, String email, String extraEmail, String password, String profileDescription, long creditCardId, String employerRole, String phoneNumber, Company company) {
+    public Employer(int id, String firstName, String lastName, String region, String email, String extraEmail, String password, String profileDescription, long paypalPurse, String employerRole, String phoneNumber, Company company) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -139,14 +139,14 @@ public class Employer {
         this.email = email;
         this.password = password;
         this.profileDescription = profileDescription;
-        this.creditCardId = creditCardId;
+        this.paypalPurse = paypalPurse;
         this.employerRole = employerRole;
         this.phoneNumber = phoneNumber;
         this.company = company;
     }
 
     public Employer(int id, String firstName, String lastName, String region, String email,
-                    String password, String profileDescription, long creditCardId, String employerRole,
+                    String password, String profileDescription, long paypalPurse, String employerRole,
                     String phoneNumber, Set<Job> jobs, List<Tag> tags, Company company, Rating rating) {
         this.id = id;
         this.firstName = firstName;
@@ -155,13 +155,31 @@ public class Employer {
         this.email = email;
         this.password = password;
         this.profileDescription = profileDescription;
-        this.creditCardId = creditCardId;
+        this.paypalPurse = paypalPurse;
         this.employerRole = employerRole;
         this.phoneNumber = phoneNumber;
         this.jobs = jobs;
         this.tags = tags;
         this.company = company;
         this.rating = rating;
+    }
+
+    public Employer(int id, String firstName, String lastName, String region, String dateOfBirth, String email, String password, String phoneNumber, long paypalPurse, String profileDescription, String employerRole, Set<Job> jobs, List<Tag> tags, Company company, Rating rating) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.region = region;
+        this.email = email;
+        this.password = password;
+        this.profileDescription = profileDescription;
+        this.paypalPurse = paypalPurse;
+        this.dateOfBirth = dateOfBirth;
+        this.employerRole = employerRole;
+        this.phoneNumber = phoneNumber;
+        this.rating = rating;
+        this.jobs = jobs;
+        this.company = company;
+        this.tags = tags;
     }
 
     public int getId() {
@@ -200,12 +218,13 @@ public class Employer {
         this.password = password;
     }
 
+
     public long getCreditCardId() {
-        return creditCardId;
+        return paypalPurse;
     }
 
-    public void setCreditCardId(long creditCardId) {
-        this.creditCardId = creditCardId;
+    public void setCreditCardId(long paypalPurse) {
+        this.paypalPurse = paypalPurse;
     }
 
     public String getPhoneNumber() {
@@ -293,16 +312,17 @@ public class Employer {
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", region='" + region + '\'' +
+                ", dateOfBirth='" + dateOfBirth + '\'' +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
-                ", profileDescription='" + profileDescription + '\'' +
-                ", creditCardId=" + creditCardId +
-                ", employerRole='" + employerRole + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
+                ", paypalPurse=" + paypalPurse +
+                ", profileDescription='" + profileDescription + '\'' +
+                ", employerRole='" + employerRole + '\'' +
+                ", jobs=" + jobs +
                 ", tags=" + tags +
                 ", company=" + company +
                 ", rating=" + rating +
                 '}';
     }
-
 }
