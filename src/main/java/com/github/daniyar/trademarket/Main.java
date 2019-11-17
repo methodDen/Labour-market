@@ -1,8 +1,10 @@
 package com.github.daniyar.trademarket;
 
 import com.github.daniyar.trademarket.Controller.*;
+import com.github.daniyar.trademarket.Utils.AuthManagment;
 import com.github.daniyar.trademarket.Utils.Constants;
 import com.github.daniyar.trademarket.Utils.JacksonUtils;
+import com.github.daniyar.trademarket.Utils.Role;
 import io.javalin.Javalin;
 import io.javalin.json.JavalinJackson;
 import org.h2.tools.Server;
@@ -11,16 +13,29 @@ import org.h2.tools.Server;
 import java.sql.SQLException;
 
 import static io.javalin.apibuilder.ApiBuilder.*;
+import static io.javalin.security.SecurityUtil.roles;
 
 public class Main {
     public static void main(String[] args) {
         Javalin app = Javalin.create()
                 .port(Constants.PORT);
         JavalinJackson.configure(JacksonUtils.getMapper());
+
+        app.accessManager(((handler, ctx, permittedRoles) -> {
+            Role role = AuthManagment.getUserRole(ctx);
+            if(permittedRoles.contains(role)) {
+                handler.handle(ctx);
+            }
+            else {
+                ctx.status(Constants.FORBIDDEN);
+            }
+        }));
+
+
         app.routes(()->{
 //            crud("company/:id", new CompanyController());       // write all paths manually
             crud("employee/:id", new EmployeeController());
-            crud("employer/:id", new EmployerController()); // write all paths manually
+//            crud("employer/:id", new EmployerController()); // write all paths manually
             crud("job/:id", new JobController());           // write all paths manually
             crud("rating/:id", new RatingController());
             crud("tag/:id", new TagController());
@@ -31,13 +46,16 @@ public class Main {
                 get("/unsecured/:id", ctx -> new CompanyController().getOneForUsers(ctx, ctx.pathParam("id")));
                 get("/secured/:id", ctx -> new CompanyController().getOne(ctx, ctx.pathParam("id")));
             });
-//
-//            path("employer", ()-> {
-//                get("/unsecured", ctx -> new EmployerController().getAllForUsers(ctx));
-//                get("/secured", ctx -> new EmployerController().getAll(ctx));
-//                get("/unsecured/:id", ctx -> new EmployerController().getOneForUsers(ctx, ctx.pathParam("id")));
-//                get("/secured/:id", ctx -> new EmployerController().getOne(ctx, ctx.pathParam("id")));
-//            });
+
+            path("employer", ()-> {
+                get("/unsecured", ctx -> new EmployerController().getAllForUsers(ctx), roles(Role.ANONYMOUS));
+                get("/secured", ctx -> new EmployerController().getAll(ctx), roles(Role.AUTHORIZED));
+                get("/unsecured/:id", ctx -> new EmployerController().getOneForUsers(ctx, ctx.pathParam("id")));
+                get("/secured/:id", ctx -> new EmployerController().getOne(ctx, ctx.pathParam("id")));
+                post(ctx -> new EmployerController().create(ctx), roles(Role.ANONYMOUS, Role.AUTHORIZED));
+                patch(":id", ctx -> new EmployerController().update(ctx, ctx.pathParam("id")), roles(Role.AUTHORIZED));
+                delete(":id", ctx -> new EmployerController().delete(ctx, ctx.pathParam("id")), roles(Role.AUTHORIZED));
+            });
 
 //            path("job", ()-> {
 //                get("/unsecured", ctx -> new JobController().getAllForUsers(ctx));

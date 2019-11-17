@@ -34,6 +34,7 @@ public class EmployerSerializer extends StdSerializer<Employer> {
         jsonGenerator.writeNumberField("paypalPurse", employer.getCreditCardId()); // sensitive
         jsonGenerator.writeStringField("profileDescription", employer.getProfileDescription());
         jsonGenerator.writeStringField("employerRole", employer.getEmployerRole());
+        jsonGenerator.writeStringField("employerUserRole", String.valueOf(employer.getRole())); // sensitive
 
         jsonGenerator.writeArrayFieldStart("jobs");
         Collection<Job> jobs = employer.getJobs();

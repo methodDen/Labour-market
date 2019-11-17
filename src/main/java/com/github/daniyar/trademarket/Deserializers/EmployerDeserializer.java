@@ -11,6 +11,8 @@ import com.github.daniyar.trademarket.Dao.JobDAO;
 import com.github.daniyar.trademarket.Dao.RatingDAO;
 import com.github.daniyar.trademarket.Dao.TagDAO;
 import com.github.daniyar.trademarket.POJO.*;
+import com.github.daniyar.trademarket.Utils.Role;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.IOException;
 import java.util.*;
@@ -36,11 +38,14 @@ public class EmployerDeserializer extends StdDeserializer<Employer> { // tested
         String profileDescription = jsonNode.get("profileDescription").asText();
         long paypalPurse = jsonNode.get("paypalPurse").asLong();
         String dateOfBirth = jsonNode.get("dateOfBirth").asText();
+
         String employerRole =  jsonNode.get("employerRole").asText();
+        String employerUserRole = jsonNode.get("employerUserRole").asText();
+
         String phoneNumber = jsonNode.get("phoneNumber").asText();
 
         int ratingId = jsonNode.get("ratingId").asInt();
-        Rating r = new RatingDAO().findById(ratingId);
+        Rating rating = new RatingDAO().findById(ratingId);
 
         ArrayNode jobNode = (ArrayNode) jsonNode.get("jobs"); // testing
         Set<Job> jobs = new HashSet<>();
@@ -52,7 +57,7 @@ public class EmployerDeserializer extends StdDeserializer<Employer> { // tested
         }
 
          int companyId = jsonNode.get("companyId").asInt();  // tested
-         Company c = new CompanyDAO().findById(companyId);
+         Company company = new CompanyDAO().findById(companyId);
 
 
         ArrayNode tagNode = (ArrayNode) jsonNode.get("tags");
@@ -67,9 +72,10 @@ public class EmployerDeserializer extends StdDeserializer<Employer> { // tested
 
 
 
-        return new Employer(0, firstName, lastName, region, email,
-                        password, profileDescription,
-                phoneNumber, paypalPurse , employerRole, dateOfBirth,jobs , tags, c,r);
+        return new Employer(0, firstName, lastName, region, dateOfBirth, email,
+                BCrypt.hashpw(password, BCrypt.gensalt()), phoneNumber,
+                paypalPurse, profileDescription, employerRole, Role.valueOf(employerUserRole),
+                jobs , tags, company, rating);
 
     }
 
