@@ -1,6 +1,6 @@
-package com.github.daniyar.trademarket.Utils;
+package com.github.daniyar.trademarket.Utils; // importing packages
 
-public class Constants {
+public class Constants { // constants with http statuses
     public static final int CREATED_201 = 201;
     public static final int OK_200 = 200;
     public static final int INTERNAL_SERVER_ERROR = 500;

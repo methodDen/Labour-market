@@ -36,6 +36,12 @@ public class CompanySerializer extends StdSerializer<Company> {
             jsonGenerator.writeNumberField("id", employer.getId());
             jsonGenerator.writeStringField("firstName", employer.getFirstName());
             jsonGenerator.writeStringField("lastName", employer.getLastName());
+            jsonGenerator.writeStringField("region", employer.getRegion());
+            jsonGenerator.writeStringField("dateOfBirth", employer.getDateOfBirth());
+            jsonGenerator.writeStringField("email", employer.getEmail());       // sensitive
+            jsonGenerator.writeStringField("phoneNumber", employer.getPhoneNumber());
+            jsonGenerator.writeStringField("profileDescription", employer.getProfileDescription());
+            jsonGenerator.writeStringField("employerUserRole", String.valueOf(employer.getRole())); // sensitive
             jsonGenerator.writeEndObject();
         }
         jsonGenerator.writeEndArray();

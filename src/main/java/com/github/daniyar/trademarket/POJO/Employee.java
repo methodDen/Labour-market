@@ -1,84 +1,97 @@
-package com.github.daniyar.trademarket.POJO;
+package com.github.daniyar.trademarket.POJO; // importing packages
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.github.daniyar.trademarket.Utils.Role;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
-@Entity
-@Table(name="Employee")
-public class Employee {
-    @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
-    @Column(name = "employeeId")
-    private int id;
+@Entity // Database entity jackson annotation
+@Table(name="Employee") // Database table Jackson annotation with assigned table name
+public class Employee { // Employee class
+    @Id // Primary key of Employee table
+    @GeneratedValue (strategy = GenerationType.IDENTITY) // using auto-filling for Employee table
+    @Column(name = "employeeId") // name of column inside database table
+    private int id; // Object parameter equal to entity attribute
 
-    @Column (name = "firstName")
-    private String firstName;
+    @Column (name = "firstName") // name of column inside database table
+    private String firstName; // Object parameter equal to entity attribute
 
-    @Column(name = "lastName")
-    private String lastName;
+    @Column(name = "lastName") // name of column inside database table
+    private String lastName; // Object parameter equal to entity attribute
 
-    @Column(name = "region")
-    private String regionName;
+    @Column(name = "status") // name of column inside database table
+    private String status; // Object parameter equal to entity attribute
 
-    @Column(name = "mobilePhone")
-    private String mobilePhone;     //Perhaps other type would suit for it better
+    @Column(name = "region") // name of column inside database table
+    private String regionName; // Object parameter equal to entity attribute
 
-    @Column(name = "profileDescription")
-    private String profileDescription;
+    @Column(name = "profileDescription") // name of column inside database table
+    private String profileDescription; // Object parameter equal to entity attribute
 
-    @Column(name = "password")
-    private String password; // sensitive data, cypher
+    @Column(name = "dateOfBirth") // name of column inside database table
+    private String dateOfBirth; // Object parameter equal to entity attribute
 
-    @Column(name = "email")
-    private String email;
+    @Column(name = "mobilePhone") // name of column inside database table
+    private String mobilePhone;     // Object parameter equal to entity attribute
 
-    @Column(name = "extraEmail")
-    private String extraEmail;  // sensitive data
+    @Column(name = "email") // name of column inside database table
+    private String email; // Object parameter equal to entity attribute
 
-    @Column(name = "paypalPurse")
-    private long creditCardId;
+    @Column(name = "password") // name of column inside database table
+    private String password; // Object parameter equal to entity attribute
 
-    // add foreign keys and establish table relations
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "Employee_Job",
-            joinColumns = @JoinColumn(referencedColumnName = "employeeId"),
-            inverseJoinColumns = @JoinColumn(referencedColumnName = "jobId"))
-    private List<Job> jobs = new ArrayList<>();
+    @Column(name = "paypalPurse") // name of column inside database table
+    private long creditCardId; // Object parameter equal to entity attribute
 
-    @ManyToMany
-    @JoinTable (name = "Employee_Tag",
-            joinColumns = @JoinColumn(referencedColumnName = "employeeId"),
-            inverseJoinColumns = @JoinColumn(referencedColumnName = "tagId"))
-    private List<Tag> tags = new ArrayList<>();
+    @Column (name = "employerUserRole") // name of column inside database table
+    private Role role; // Object parameter equal to entity attribute
+
+    @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER) // annotation displaying relationship between database tables. One-to-many relationship tables should have one column inside one table in which foreign key will be stored
+    private Set<Job> jobs = new HashSet<>(); // Object parameter equal to entity attribute
 
 
+    @JsonIgnore // jackson annotation to ignore error
+    @ManyToMany(cascade = CascadeType.ALL) //  annotation displaying relationship between database tables. Many-to-many relationship tables should have one additional table where foreign key from both already existing tables will be stored
+    @JoinTable( // annotation to create additional table
+            joinColumns = { @JoinColumn(referencedColumnName = "employeeId") },
+            inverseJoinColumns = { @JoinColumn(referencedColumnName = "tagId") }
+    )
+    private List<Tag> tags = new ArrayList<>(); // Object parameter equal to entity attribute
 
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "ratingId")
-    private Rating rating;
+    @OneToOne(cascade = CascadeType.ALL)  // annotation displaying relationship between database tables. One-to-one relationship tables should have additional column inside one table to store foreign key
+    @JoinColumn(name = "ratingId") // joinColumn jackson annotation
+    private Rating rating; // Object parameter equal to entity attribute
 
 
-    public Employee() {
+    public Employee() { // empty constructor
     }
 
-    public Employee(int id, String firstName, String lastName, String regionName, String mobilePhone, String profileDescription, String password, String email, String extraEmail, long creditCardId, List<Job> jobs, List<Tag> tags, Rating rating) {
+    public Employee(int id, String firstName, String lastName, String status,
+                    String regionName, String profileDescription, String dateOfBirth,
+                    String mobilePhone, String email, String password, long creditCardId,
+                    Role role, Set<Job> jobs, List<Tag> tags, Rating rating) { // parametrized constructor
+
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
+        this.status = status;
         this.regionName = regionName;
-        this.mobilePhone = mobilePhone;
         this.profileDescription = profileDescription;
-        this.password = password;
+        this.dateOfBirth = dateOfBirth;
+        this.mobilePhone = mobilePhone;
         this.email = email;
-        this.extraEmail = extraEmail;
+        this.password = password;
         this.creditCardId = creditCardId;
+        this.role = role;
         this.jobs = jobs;
         this.tags = tags;
         this.rating = rating;
     }
 
+
+    // getters and setters
     public int getId() {
         return id;
     }
@@ -143,14 +156,6 @@ public class Employee {
         this.email = email;
     }
 
-    public String getExtraEmail() {
-        return extraEmail;
-    }
-
-    public void setExtraEmail(String extraEmail) {
-        this.extraEmail = extraEmail;
-    }
-
     public long getCreditCardId() {
         return creditCardId;
     }
@@ -159,11 +164,35 @@ public class Employee {
         this.creditCardId = creditCardId;
     }
 
-    public List<Job> getJobs() {
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public void setDateOfBirth(String dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public Set<Job> getJobs() {
         return jobs;
     }
 
-    public void setJobs(List<Job> jobs) {
+    public void setJobs(Set<Job> jobs) {
         this.jobs = jobs;
     }
 
@@ -183,22 +212,52 @@ public class Employee {
         this.rating = rating;
     }
 
+
     @Override
-    public String toString() {
+    public String toString() { // toString method to convert data about Class Object to String
         return "Employee{" +
                 "id=" + id +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
+                ", status='" + status + '\'' +
                 ", regionName='" + regionName + '\'' +
-                ", mobilePhone='" + mobilePhone + '\'' +
                 ", profileDescription='" + profileDescription + '\'' +
-                ", password='" + password + '\'' +
+                ", dateOfBirth='" + dateOfBirth + '\'' +
+                ", mobilePhone='" + mobilePhone + '\'' +
                 ", email='" + email + '\'' +
-                ", extraEmail='" + extraEmail + '\'' +
+                ", password='" + password + '\'' +
                 ", creditCardId=" + creditCardId +
+                ", role=" + role +
                 ", jobs=" + jobs +
                 ", tags=" + tags +
                 ", rating=" + rating +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) { // equals method
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Employee employee = (Employee) o;
+        return id == employee.id &&
+                creditCardId == employee.creditCardId &&
+                Objects.equals(firstName, employee.firstName) &&
+                Objects.equals(lastName, employee.lastName) &&
+                Objects.equals(status, employee.status) &&
+                Objects.equals(regionName, employee.regionName) &&
+                Objects.equals(profileDescription, employee.profileDescription) &&
+                Objects.equals(dateOfBirth, employee.dateOfBirth) &&
+                Objects.equals(mobilePhone, employee.mobilePhone) &&
+                Objects.equals(email, employee.email) &&
+                Objects.equals(password, employee.password) &&
+                role == employee.role &&
+                Objects.equals(jobs, employee.jobs) &&
+                Objects.equals(tags, employee.tags) &&
+                Objects.equals(rating, employee.rating);
+    }
+
+    @Override
+    public int hashCode() { // hashcode method
+        return Objects.hash(id, firstName, lastName, status, regionName, profileDescription, dateOfBirth, mobilePhone, email, password, creditCardId, role, jobs, tags, rating);
     }
 }

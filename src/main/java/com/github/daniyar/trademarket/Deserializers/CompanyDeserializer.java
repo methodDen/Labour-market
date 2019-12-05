@@ -28,8 +28,8 @@ public class CompanyDeserializer extends StdDeserializer<Company> {
     public Company deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException, JsonProcessingException {
         JsonNode jsonNode = jsonParser.getCodec().readTree(jsonParser);
         String companyName = jsonNode.get("companyName").asText();
-        ArrayNode employerNode = (ArrayNode) jsonNode.get("employers");
 
+        ArrayNode employerNode = (ArrayNode) jsonNode.get("employers");
         Set<Employer> employers = new HashSet<>(); // List of employers is retrieved from database and stored here
         for (Iterator<JsonNode> it = employerNode.elements(); it.hasNext(); ) {
             JsonNode element = it.next();

@@ -30,7 +30,7 @@ public class JobDeserializer extends StdDeserializer<Job> {
         String jobDescription = jsonNode.get("jobDescription").asText();
         String paymentSum = jsonNode.get("paymentSum").asText();
         String requirements = jsonNode.get("requirements").asText();
-        String responsibilities = jsonNode.get("resp").asText();
+        String responsibilities = jsonNode.get("resps").asText();
         String terms = jsonNode.get("workingTerms").asText();
         String dateOfCompletion = jsonNode.get("dateOfCompletion").asText();
         int duration = jsonNode.get("durationInHours").asInt();

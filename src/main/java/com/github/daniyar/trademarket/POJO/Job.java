@@ -57,7 +57,9 @@ public class Job {
     @ManyToMany(mappedBy = "jobs", fetch = FetchType.EAGER) // mappedBy - name of jobs Set in Employer Class + fetch type
     private Set<Employer> employers = new HashSet<>();
 
-
+    @ManyToOne
+    @JoinColumn(referencedColumnName ="employeeId") // tested
+    private Employee employee;
 
 
     @OneToOne(cascade = CascadeType.ALL)
@@ -67,30 +69,10 @@ public class Job {
     public Job() {
     }
 
-    public Job(int id, String jobName) { // remove?
-        this.id = id;
-        this.jobName = jobName;
-    }
-
-    public Job(int id, String jobName, String placeOfPerformance, String dateOfCompletion, // remove?
-               String paymentSum, String processStatus, String jobDescription, List<Tag> tags,
-               Set<Employer> employers, Rating rating) {
-        this.id = id;
-        this.jobName = jobName;
-        this.placeOfPerformance = placeOfPerformance;
-        this.dateOfCompletion = dateOfCompletion;
-        this.paymentSum = paymentSum;
-        this.processStatus = processStatus;
-        this.jobDescription = jobDescription;
-        this.tags = tags;
-        this.employers = employers;
-        this.rating = rating;
-    }
-
     public Job(int id, String jobName, String jobDescription, String paymentSum,
                String requirements, String responsibilities, String workingTerms,
-               String dateOfCompletion, int duration, String placeOfPerformance,
-               String processStatus, List<Tag> tags, Set<Employer> employers, Rating rating) { // for JobDeserializer
+               String dateOfCompletion, int duration, String placeOfPerformance, String processStatus,
+               List<Tag> tags, Set<Employer> employers, Rating rating) {
         this.id = id;
         this.jobName = jobName;
         this.jobDescription = jobDescription;
@@ -106,6 +88,8 @@ public class Job {
         this.employers = employers;
         this.rating = rating;
     }
+
+
 
     public int getId() {
         return id;
@@ -153,6 +137,14 @@ public class Job {
 
     public void setJobName(String jobName) {
         this.jobName = jobName;
+    }
+
+    public Employee getEmployee() {
+        return employee;
+    }
+
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
     }
 
     public String getPlaceOfPerformance() {

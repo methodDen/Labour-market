@@ -26,7 +26,7 @@ public class Company {
         this.employers = employers;
     }
 
-    @OneToMany(mappedBy = "company") // tested
+    @OneToMany(mappedBy = "company", fetch = FetchType.EAGER) // tested
     private Set<Employer> employers;
 
 
